@@ -9,9 +9,15 @@ async function init() {
     // await chromeWebDriver.quit();
     // chromeWebDriver.quitAfter(10);
     // General demonstration of the websiteobject class:
-    const ytwebsite = new youtubeWebSite_1.YoutubeWebSite();
-    await ytwebsite.load();
-    await ytwebsite.quit();
+    const ytWebSite = new youtubeWebSite_1.YoutubeWebSite();
+    const ytHomePage = await ytWebSite.load();
+    await ytWebSite.quit();
 }
+/**
+ * let ytHomePage = await ytWebSite.load(); //loads implicitly the home page of the website and returns the youtubehomepage object
+ * let ytHomePage = await ytWebSite.load("HomePage") // loads explicitly the home page of the website and returns the youtubehompage object
+ * let ytChannelDashboard = await ytWebSite.load("ChannelDashboard") //loads a page object and returns the page object / component object associated with it. E.g: "ChannelDashboad"
+ * The page url / link could be broken, so we need to have another way to access it (indirect clicks from home page to the page / component object)
+ */
 init();
 //# sourceMappingURL=init.js.map

@@ -1,3 +1,5 @@
+import { PageObject } from "./pageObject";
+import { HomePageObject } from "./pages/homePageObject";
 import { WebDriverObject } from "./webDriverObject";
 
 /**
@@ -19,25 +21,23 @@ export class WebSiteObject {
   };
 
   // Current website options. May default to the above options.
-  protected static url = "";
   protected webDriver: WebDriverObject;
+  protected pages = { HomePage: new HomePageObject("") };
 
   /**
    * Construct and return a WebSite object to navigate within.
-   * @param     {string}           url         Set the static url for the website class.
    * @param     {WebSiteObject}    options     Give external options for the session and the construction of website object.
    */
-  constructor(options: WebSiteOptions, url: string) {
-    WebSiteObject.url = url;
+  constructor(options: WebSiteOptions) {
     this.webDriver = options.webDriver;
   }
   /**
    * Schedules a command to navigate to the url of the website.
    * @return A promise that will be resolved when the document has finished loading.
    */
-  protected async loadWebSite() {
+  protected async loadWebSite(targetUrl: string) {
     const { implicitWait } = WebSiteObject.defaultWebSiteOptions;
-    await this.webDriver.get(WebSiteObject.url);
+    await this.webDriver.get(targetUrl);
     await this.webDriver.setImplicitWait(implicitWait);
   }
 
@@ -46,14 +46,14 @@ export class WebSiteObject {
    * @return A promise that will be resolved when the document has finished loading.
    * It throws an error and quits the session if the website is not loaded correctly.
    */
-  protected async isWebSiteLoaded() {
+  protected async isWebSiteLoaded(targetUrl: string) {
     // Check if the url of the loaded page is the same as the defined url of the website.
     let currentUrl = await this.webDriver.getCurrentUrl();
-    if (WebSiteObject.url !== currentUrl) {
-      this.quit();
+    if (targetUrl !== currentUrl) {
+      await this.quit();
       throw new Error(
-        "Not on the entry page of the website '" +
-          WebSiteObject.url +
+        "Not on the specified page of the website '" +
+          targetUrl +
           "'. Current page is: '" +
           currentUrl +
           "'"
@@ -66,10 +66,13 @@ export class WebSiteObject {
    * @return A promise that will be resolved when the document has finished loading.
    * It throws an error and quits the session if the website is not loaded correctly.
    */
-  public async load() {
-    await this.loadWebSite();
-    await this.isWebSiteLoaded();
-    // TODO: return an empty page object. For a specific site, it should return the home page of the website
+  public async load(page?: PageObject) {
+    if (!page) page = this.pages.HomePage;
+    await this.loadWebSite(page.url);
+    await this.isWebSiteLoaded(page.url);
+    if (page === this.pages.HomePage)
+      this.pages.HomePage.acceptCookiesIfTheyExists(); //TODO: see if you need await after implementation
+    return page;
   }
 
   /**

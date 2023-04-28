@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebSiteObject = void 0;
+const homePageObject_1 = require("./pages/homePageObject");
 const webDriverObject_1 = require("./webDriverObject");
 /**
  * It creates WebSite Objects that will contain the general representation of websites, the navigation and their page objects.
@@ -12,24 +13,22 @@ class WebSiteObject {
         implicitWait: 0,
     };
     // Current website options. May default to the above options.
-    static url = "";
     webDriver;
+    pages = { HomePage: new homePageObject_1.HomePageObject("") };
     /**
      * Construct and return a WebSite object to navigate within.
-     * @param     {string}           url         Set the static url for the website class.
      * @param     {WebSiteObject}    options     Give external options for the session and the construction of website object.
      */
-    constructor(options, url) {
-        WebSiteObject.url = url;
+    constructor(options) {
         this.webDriver = options.webDriver;
     }
     /**
      * Schedules a command to navigate to the url of the website.
      * @return A promise that will be resolved when the document has finished loading.
      */
-    async loadWebSite() {
+    async loadWebSite(targetUrl) {
         const { implicitWait } = WebSiteObject.defaultWebSiteOptions;
-        await this.webDriver.get(WebSiteObject.url);
+        await this.webDriver.get(targetUrl);
         await this.webDriver.setImplicitWait(implicitWait);
     }
     /**
@@ -37,13 +36,13 @@ class WebSiteObject {
      * @return A promise that will be resolved when the document has finished loading.
      * It throws an error and quits the session if the website is not loaded correctly.
      */
-    async isWebSiteLoaded() {
+    async isWebSiteLoaded(targetUrl) {
         // Check if the url of the loaded page is the same as the defined url of the website.
         let currentUrl = await this.webDriver.getCurrentUrl();
-        if (WebSiteObject.url !== currentUrl) {
-            this.quit();
-            throw new Error("Not on the entry page of the website '" +
-                WebSiteObject.url +
+        if (targetUrl !== currentUrl) {
+            await this.quit();
+            throw new Error("Not on the specified page of the website '" +
+                targetUrl +
                 "'. Current page is: '" +
                 currentUrl +
                 "'");
@@ -54,10 +53,14 @@ class WebSiteObject {
      * @return A promise that will be resolved when the document has finished loading.
      * It throws an error and quits the session if the website is not loaded correctly.
      */
-    async load() {
-        await this.loadWebSite();
-        await this.isWebSiteLoaded();
-        // TODO: return an empty page object. For a specific site, it should return the home page of the website
+    async load(page) {
+        if (!page)
+            page = this.pages.HomePage;
+        await this.loadWebSite(page.url);
+        await this.isWebSiteLoaded(page.url);
+        if (page === this.pages.HomePage)
+            this.pages.HomePage.acceptCookiesIfTheyExists(); //TODO: see if you need await after implementation
+        return page;
     }
     /**
      * Schedules a command to quit the current session of the website. After calling quit,
