@@ -1,15 +1,26 @@
+import path = require("node:path");
 import { Builder, ThenableWebDriver } from "selenium-webdriver";
+import { Options as ChromeOptions } from "selenium-webdriver/chrome";
 
 /**
  * Defines the options type for the constructor of the WebDriverObject class.
  */
-export interface WebDriverOptions {}
+export interface WebDriverOptions {
+  profile: string;
+  downloadDirectory: string;
+}
 
 /**
  * It creates Chrome WebDriver objects to control the Chrome browser.
  */
 export class WebDriverObject {
-  private static defaultWebDriverOptions: WebDriverOptions = {};
+  static readonly defaultWebDriverOptions: WebDriverOptions = {
+    profile: "Default",
+    downloadDirectory: "",
+  };
+  private static downloadRelDir =
+    "./../../../../ts/windowsController/resources/download";
+  private static userdataRelDir = "./../../../../ts/browserController/userdata";
   private chromeWebDriver: ThenableWebDriver;
 
   /**
@@ -21,8 +32,35 @@ export class WebDriverObject {
     // Set default options if they are not given.
     if (!options) options = WebDriverObject.defaultWebDriverOptions;
 
-    // Create a chrome web driver
-    this.chromeWebDriver = new Builder().forBrowser("chrome").build();
+    // Create a builder for chrome web driver
+    const builder = new Builder().forBrowser("chrome");
+
+    // Define the path to download and userdata directories
+    const downloadDir = path.join(__dirname, WebDriverObject.downloadRelDir);
+    const userPreferences = {
+      "download.default_directory": downloadDir + options.downloadDirectory,
+    };
+    const userdataDir = path.join(__dirname, WebDriverObject.userdataRelDir);
+
+    // Define and set chrome builder options
+    const chromeOptions = new ChromeOptions()
+      .setUserPreferences(userPreferences)
+      .addArguments(`user-data-dir=${userdataDir}`)
+      .addArguments(`profile-directory=${options.profile}`);
+    builder.setChromeOptions(chromeOptions);
+
+    //Create the chrome web driver in fullscreen
+    this.chromeWebDriver = builder.build();
+  }
+
+  /**
+   *  Enlarge or hide the browser's window.
+   * @param   {"maximize" | "minimize"}    operation  Set the operation for the window: maximize or minimize.
+   */
+  public async windowMinMax(operation: "maximize" | "minimize") {
+    if (operation === "maximize")
+      await this.chromeWebDriver.manage().window().maximize();
+    else await this.chromeWebDriver.manage().window().minimize();
   }
 
   /**

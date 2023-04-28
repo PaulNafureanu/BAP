@@ -54,6 +54,7 @@ class WebSiteObject {
      * It throws an error and quits the session if the website is not loaded correctly.
      */
     async load(page) {
+        await this.webDriver.windowMinMax("maximize");
         if (!page)
             page = this.pages.HomePage;
         await this.loadWebSite(page.url);
