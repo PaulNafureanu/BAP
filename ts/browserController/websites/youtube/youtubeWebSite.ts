@@ -7,16 +7,22 @@ import { YoutubeHomePage } from "./pages/youtubeHomePage";
  * the navigation within with its page and components objects.
  */
 export class YoutubeWebSite extends WebSiteObject {
+  protected webSiteURL = "https://www.youtube.com/";
+
   protected URLs = {
-    website: "https://www.youtube.com/",
-    channelDashboard:
+    HomePage: this.webSiteURL,
+    ChannelDashboard:
       "https://studio.youtube.com/channel/UCopd8ft4OZRkVa2nG7ZA4HQ",
   };
+
   protected pages = {
-    HomePage: new YoutubeHomePage(this.URLs.website, this.webDriver),
+    HomePage: new YoutubeHomePage(
+      this.webSiteURL,
+      this.webDriverState.webDriver
+    ),
     ChannelDashboard: new PageObject(
-      this.URLs.channelDashboard,
-      this.webDriver
+      this.URLs.ChannelDashboard,
+      this.webDriverState.webDriver
     ),
   };
 
@@ -25,7 +31,6 @@ export class YoutubeWebSite extends WebSiteObject {
    * @param     {WebSiteObject}    options     Give external options for the session and the construction of the youtube website object.
    */
   constructor(options?: WebSiteOptions) {
-    if (!options) options = YoutubeWebSite.defaultWebSiteOptions;
     super(options);
   }
 

@@ -9,21 +9,20 @@ const youtubeHomePage_1 = require("./pages/youtubeHomePage");
  * the navigation within with its page and components objects.
  */
 class YoutubeWebSite extends webSiteObject_1.WebSiteObject {
+    webSiteURL = "https://www.youtube.com/";
     URLs = {
-        website: "https://www.youtube.com/",
-        channelDashboard: "https://studio.youtube.com/channel/UCopd8ft4OZRkVa2nG7ZA4HQ",
+        HomePage: this.webSiteURL,
+        ChannelDashboard: "https://studio.youtube.com/channel/UCopd8ft4OZRkVa2nG7ZA4HQ",
     };
     pages = {
-        HomePage: new youtubeHomePage_1.YoutubeHomePage(this.URLs.website, this.webDriver),
-        ChannelDashboard: new pageObject_1.PageObject(this.URLs.channelDashboard, this.webDriver),
+        HomePage: new youtubeHomePage_1.YoutubeHomePage(this.webSiteURL, this.webDriverState.webDriver),
+        ChannelDashboard: new pageObject_1.PageObject(this.URLs.ChannelDashboard, this.webDriverState.webDriver),
     };
     /**
      * Construct and return a Youtube WebSite object to navigate within.
      * @param     {WebSiteObject}    options     Give external options for the session and the construction of the youtube website object.
      */
     constructor(options) {
-        if (!options)
-            options = YoutubeWebSite.defaultWebSiteOptions;
         super(options);
     }
     /**

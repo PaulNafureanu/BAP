@@ -6,45 +6,58 @@ import { HomePageObject } from "./pages/homePageObject";
  * Defines the options type for the constructor of the WebSiteObject class.
  */
 export interface WebSiteOptions {
-  webDriver: WebDriverObject;
-  implicitWait: number;
+  webDriverState: {
+    webDriver: WebDriverObject;
+    webDriverOptions: { implicitWait: number };
+  };
 }
 
 /**
  * It creates WebSite Objects that will contain the general representation of websites, the navigation and their page objects.
  */
 export class WebSiteObject {
-  // Default website options for all website classes and objects
-  protected static defaultWebSiteOptions: WebSiteOptions = {
+  // The states and defaults of the website object
+
+  // The url of our website object
+  protected webSiteURL = "";
+
+  // Web Driver State used for this browser session and website object
+  protected webDriverState = {
     webDriver: new WebDriverObject(),
-    implicitWait: 0,
+    webDriverOptions: { implicitWait: 0 },
   };
 
-  // Current website options. May default to the above options.
-  protected webDriver: WebDriverObject =
-    WebSiteObject.defaultWebSiteOptions.webDriver;
+  // Web Site State (urls and pages) used for this website object
   protected URLs = {
-    website: "",
+    HomePage: this.webSiteURL,
   };
+
   protected pages = {
-    HomePage: new HomePageObject(this.URLs.website, this.webDriver),
+    HomePage: new HomePageObject(
+      this.webSiteURL,
+      this.webDriverState.webDriver
+    ),
   };
 
   /**
    * Construct and return a WebSite object to navigate within.
    * @param     {WebSiteObject}    options     Give external options for the session and the construction of website object.
    */
-  constructor(options: WebSiteOptions) {
-    this.webDriver = options.webDriver;
+  constructor(options?: WebSiteOptions) {
+    if (options) {
+      this.webDriverState = options.webDriverState;
+    }
   }
   /**
    * Schedules a command to navigate to the url of the website.
    * @return A promise that will be resolved when the document has finished loading.
    */
   protected async loadWebSite(targetUrl: string) {
-    const { implicitWait } = WebSiteObject.defaultWebSiteOptions;
-    await this.webDriver.get(targetUrl);
-    await this.webDriver.setImplicitWait(implicitWait);
+    const { implicitWait } = this.webDriverState.webDriverOptions;
+    const { webDriver } = this.webDriverState;
+
+    await webDriver.get(targetUrl);
+    await webDriver.setImplicitWait(implicitWait);
   }
 
   /**
@@ -54,7 +67,9 @@ export class WebSiteObject {
    */
   protected async isWebSiteLoaded(targetUrl: string) {
     // Check if the url of the loaded page is the same as the defined url of the website.
-    let currentUrl = await this.webDriver.getCurrentUrl();
+    const { webDriver } = this.webDriverState;
+    const currentUrl = await webDriver.getCurrentUrl();
+
     if (targetUrl !== currentUrl) {
       await this.quit();
       throw new Error(
@@ -72,11 +87,14 @@ export class WebSiteObject {
    * @returns A promise that contains the current page object or undefined.
    */
   protected async getCurrentPageByPageKey() {
-    const currentUrl = await this.webDriver.getCurrentUrl();
-    let pageKey: keyof typeof this.pages;
-    for (pageKey in this.pages) {
-      if (this.pages[pageKey].url === currentUrl) {
-        return this.pages[pageKey];
+    const { webDriver } = this.webDriverState;
+    const { pages } = this;
+    const currentUrl = await webDriver.getCurrentUrl();
+
+    let pageKey: keyof typeof pages;
+    for (pageKey in pages) {
+      if (pages[pageKey].url === currentUrl) {
+        return pages[pageKey];
       }
     }
   }
@@ -87,12 +105,14 @@ export class WebSiteObject {
    * It throws an error and quits the session if the website is not loaded correctly.
    */
   public async load(page?: PageObject) {
-    await this.webDriver.windowMinMax("maximize");
-    if (!page) page = this.pages.HomePage;
+    const { webDriver } = this.webDriverState;
+    const { pages } = this;
+
+    await webDriver.windowMinMax("maximize");
+    if (!page) page = pages.HomePage;
     await this.loadWebSite(page.url);
     await this.isWebSiteLoaded(page.url);
-    if (page === this.pages.HomePage)
-      this.pages.HomePage.acceptCookiesIfTheyExists(); //TODO: see if you need await after implementation
+    if (page === pages.HomePage) pages.HomePage.acceptCookiesIfTheyExists(); //TODO: see if you need await after implementation
     return page;
   }
 
@@ -102,7 +122,9 @@ export class WebSiteObject {
    * It contains the previous page object in browser history or undefined if the page is not recognized in the website.
    */
   public async back(): Promise<PageObject | undefined> {
-    await this.webDriver.back();
+    const { webDriver } = this.webDriverState;
+
+    await webDriver.back();
     return await this.getCurrentPageByPageKey();
   }
 
@@ -112,7 +134,9 @@ export class WebSiteObject {
    * It contains the next page object in browser history or undefined if the page is not recognized in the website.
    */
   public async forward(): Promise<PageObject | undefined> {
-    await this.webDriver.forward();
+    const { webDriver } = this.webDriverState;
+
+    await webDriver.forward();
     return await this.getCurrentPageByPageKey();
   }
 
@@ -122,7 +146,9 @@ export class WebSiteObject {
    * It contains the current page object in browser history or undefined if the page is not recognized in the website.
    */
   public async refresh(): Promise<PageObject | undefined> {
-    await this.webDriver.refresh();
+    const { webDriver } = this.webDriverState;
+
+    await webDriver.refresh();
     return await this.getCurrentPageByPageKey();
   }
 
@@ -132,7 +158,8 @@ export class WebSiteObject {
    * @return A promise that will be resolved when the command has completed.
    */
   public quit() {
-    return this.webDriver.quit();
+    const { webDriver } = this.webDriverState;
+    return webDriver.quit();
   }
 
   /**
@@ -142,6 +169,7 @@ export class WebSiteObject {
    * @return A promise that will be resolved when the command has completed.
    */
   public quitAfter(ms: number) {
-    this.webDriver.quitAfter(ms);
+    const { webDriver } = this.webDriverState;
+    webDriver.quitAfter(ms);
   }
 }
