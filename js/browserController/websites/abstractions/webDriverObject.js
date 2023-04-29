@@ -36,7 +36,8 @@ class WebDriverObject {
         const chromeOptions = new chrome_1.Options()
             .setUserPreferences(userPreferences)
             .addArguments(`user-data-dir=${userdataDir}`)
-            .addArguments(`profile-directory=${options.profile}`);
+            .addArguments(`profile-directory=${options.profile}`)
+            .excludeSwitches("enable-logging");
         builder.setChromeOptions(chromeOptions);
         //Create the chrome web driver in fullscreen
         this.chromeWebDriver = builder.build();
@@ -76,6 +77,27 @@ class WebDriverObject {
      */
     setImplicitWait(ms) {
         return this.chromeWebDriver.manage().setTimeouts({ implicit: ms });
+    }
+    /**
+     * Schedules a command to move backwards in the chrome browser history.
+     * @returns A promise that will be resolved when the navigation event has completed.
+     */
+    back() {
+        return this.chromeWebDriver.navigate().back();
+    }
+    /**
+     * Schedules a command to move forwards in the chrome browser history.
+     * @returns A promise that will be resolved when the navigation event has completed.
+     */
+    forward() {
+        return this.chromeWebDriver.navigate().forward();
+    }
+    /**
+     * Schedules a command to refresh the current page.
+     * @returns A promise that will be resolved when the navigation event has completed.
+     */
+    refresh() {
+        return this.chromeWebDriver.navigate().refresh();
     }
     /**
      * Schedules a command to quit the current session. After calling quit,

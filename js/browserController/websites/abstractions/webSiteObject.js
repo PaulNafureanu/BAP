@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebSiteObject = void 0;
-const homePageObject_1 = require("./pages/homePageObject");
 const webDriverObject_1 = require("./webDriverObject");
+const homePageObject_1 = require("./pages/homePageObject");
 /**
  * It creates WebSite Objects that will contain the general representation of websites, the navigation and their page objects.
  */
@@ -13,8 +13,13 @@ class WebSiteObject {
         implicitWait: 0,
     };
     // Current website options. May default to the above options.
-    webDriver;
-    pages = { HomePage: new homePageObject_1.HomePageObject("") };
+    webDriver = WebSiteObject.defaultWebSiteOptions.webDriver;
+    URLs = {
+        website: "",
+    };
+    pages = {
+        HomePage: new homePageObject_1.HomePageObject(this.URLs.website, this.webDriver),
+    };
     /**
      * Construct and return a WebSite object to navigate within.
      * @param     {WebSiteObject}    options     Give external options for the session and the construction of website object.
@@ -49,6 +54,19 @@ class WebSiteObject {
         }
     }
     /**
+     * Schedules a command to return the current page object using the current url.
+     * @returns A promise that contains the current page object or undefined.
+     */
+    async getCurrentPageByPageKey() {
+        const currentUrl = await this.webDriver.getCurrentUrl();
+        let pageKey;
+        for (pageKey in this.pages) {
+            if (this.pages[pageKey].url === currentUrl) {
+                return this.pages[pageKey];
+            }
+        }
+    }
+    /**
      * Schedules a command to load the website.
      * @return A promise that will be resolved when the document has finished loading.
      * It throws an error and quits the session if the website is not loaded correctly.
@@ -62,6 +80,33 @@ class WebSiteObject {
         if (page === this.pages.HomePage)
             this.pages.HomePage.acceptCookiesIfTheyExists(); //TODO: see if you need await after implementation
         return page;
+    }
+    /**
+     * Schedules a command to move backwards in the chrome browser history.
+     * @return A promise that will be resolved when the navigation event has completed.
+     * It contains the previous page object in browser history or undefined if the page is not recognized in the website.
+     */
+    async back() {
+        await this.webDriver.back();
+        return await this.getCurrentPageByPageKey();
+    }
+    /**
+     * Schedules a command to move forwards in the chrome browser history.
+     * @return A promise that will be resolved when the navigation event has completed.
+     * It contains the next page object in browser history or undefined if the page is not recognized in the website.
+     */
+    async forward() {
+        await this.webDriver.forward();
+        return await this.getCurrentPageByPageKey();
+    }
+    /**
+     * Schedules a command to refresh the current page.
+     * @return A promise that will be resolved when the navigation event has completed.
+     * It contains the current page object in browser history or undefined if the page is not recognized in the website.
+     */
+    async refresh() {
+        await this.webDriver.refresh();
+        return await this.getCurrentPageByPageKey();
     }
     /**
      * Schedules a command to quit the current session of the website. After calling quit,

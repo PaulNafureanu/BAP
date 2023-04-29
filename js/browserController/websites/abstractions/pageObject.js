@@ -3,12 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PageObject = void 0;
 class PageObject {
     url;
-    constructor(url) {
+    webDriver;
+    constructor(url, webDriver) {
         this.url = url;
+        this.webDriver = webDriver;
     }
-    back() { }
-    forward() { }
-    refresh() { }
 }
 exports.PageObject = PageObject;
 //# sourceMappingURL=pageObject.js.map

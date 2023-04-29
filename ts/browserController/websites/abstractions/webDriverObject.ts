@@ -46,7 +46,8 @@ export class WebDriverObject {
     const chromeOptions = new ChromeOptions()
       .setUserPreferences(userPreferences)
       .addArguments(`user-data-dir=${userdataDir}`)
-      .addArguments(`profile-directory=${options.profile}`);
+      .addArguments(`profile-directory=${options.profile}`)
+      .excludeSwitches("enable-logging");
     builder.setChromeOptions(chromeOptions);
 
     //Create the chrome web driver in fullscreen
@@ -89,6 +90,30 @@ export class WebDriverObject {
    */
   public setImplicitWait(ms: number) {
     return this.chromeWebDriver.manage().setTimeouts({ implicit: ms });
+  }
+
+  /**
+   * Schedules a command to move backwards in the chrome browser history.
+   * @returns A promise that will be resolved when the navigation event has completed.
+   */
+  public back() {
+    return this.chromeWebDriver.navigate().back();
+  }
+
+  /**
+   * Schedules a command to move forwards in the chrome browser history.
+   * @returns A promise that will be resolved when the navigation event has completed.
+   */
+  public forward() {
+    return this.chromeWebDriver.navigate().forward();
+  }
+
+  /**
+   * Schedules a command to refresh the current page.
+   * @returns A promise that will be resolved when the navigation event has completed.
+   */
+  public refresh() {
+    return this.chromeWebDriver.navigate().refresh();
   }
 
   /**

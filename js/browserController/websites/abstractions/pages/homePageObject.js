@@ -4,7 +4,7 @@ exports.HomePageObject = void 0;
 const pageObject_1 = require("../pageObject");
 class HomePageObject extends pageObject_1.PageObject {
     acceptCookiesIfTheyExists() {
-        console.log("Cookies accepted");
+        // console.log("Cookies accepted");
     }
 }
 exports.HomePageObject = HomePageObject;
