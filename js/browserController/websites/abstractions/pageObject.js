@@ -10,4 +10,10 @@ class PageObject {
     }
 }
 exports.PageObject = PageObject;
+/**
+ *
+ * page.title
+ * page.??
+ *
+ */
 //# sourceMappingURL=pageObject.js.map

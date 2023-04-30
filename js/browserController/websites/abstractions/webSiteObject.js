@@ -59,6 +59,15 @@ class WebSiteObject {
                 "'");
         }
     }
+    async loadPage(page) {
+        const { webDriver } = this.webDriverState;
+        await webDriver.windowMinMax("maximize");
+        await this.loadWebSite(page.url);
+        await this.isWebSiteLoaded(page.url);
+        if (page === this.pages.HomePage)
+            this.pages.HomePage.acceptCookiesIfTheyExists(); //TODO: see if you need await after implementation
+        return page;
+    }
     /**
      * Schedules a command to return the current page object using the current url.
      * @returns A promise that contains the current page object or undefined.
@@ -79,17 +88,14 @@ class WebSiteObject {
      * @return A promise that will be resolved when the document has finished loading.
      * It throws an error and quits the session if the website is not loaded correctly.
      */
-    async load(page) {
+    async load() {
         const { webDriver } = this.webDriverState;
-        const { pages } = this;
+        const homepage = this.pages.HomePage;
         await webDriver.windowMinMax("maximize");
-        if (!page)
-            page = pages.HomePage;
-        await this.loadWebSite(page.url);
-        await this.isWebSiteLoaded(page.url);
-        if (page === pages.HomePage)
-            pages.HomePage.acceptCookiesIfTheyExists(); //TODO: see if you need await after implementation
-        return page;
+        await this.loadWebSite(homepage.url);
+        await this.isWebSiteLoaded(homepage.url);
+        homepage.acceptCookiesIfTheyExists(); //TODO: see if you need await after implementation
+        return homepage;
     }
     /**
      * Schedules a command to move backwards in the chrome browser history.

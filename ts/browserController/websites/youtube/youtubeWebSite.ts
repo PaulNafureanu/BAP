@@ -1,6 +1,6 @@
 import { WebSiteObject, WebSiteOptions } from "../abstractions/webSiteObject";
-import { PageObject } from "../abstractions/pageObject";
 import { YoutubeHomePage } from "./pages/youtubeHomePage";
+import { ChannelDashboardPage } from "./pages/channelDashboardPage";
 
 /**
  * It creates Youtube WebSite Objects that will contain the general representation of the youtube websites,
@@ -20,7 +20,7 @@ export class YoutubeWebSite extends WebSiteObject {
       this.webSiteURL,
       this.webDriverState.webDriver
     ),
-    ChannelDashboard: new PageObject(
+    ChannelDashboard: new ChannelDashboardPage(
       this.URLs.ChannelDashboard,
       this.webDriverState.webDriver
     ),
@@ -34,14 +34,26 @@ export class YoutubeWebSite extends WebSiteObject {
     super(options);
   }
 
+  public async loadHomePage() {
+    const page = this.pages["HomePage"];
+    await this.loadPage(page);
+    return page;
+  }
+
+  public async loadChannelDashboard() {
+    const page = this.pages["ChannelDashboard"];
+    await this.loadPage(page);
+    return page;
+  }
+
   /**
-   *  Loads and returns a specific page object using a page key.
+   *  Loads and returns a youtube specific page object using a page key.
    * @param { keyof typeof this.pages} pageKey  The page key that identifies the page object in the website. Defaults to 'HomePage'.
    * @returns A promise that will be resolved after loading the document containing the specified page object.
    * It throws an error and quits the session if the page object is not loaded correctly.
    */
-  public loadPage(pageKey?: keyof typeof this.pages) {
+  public loadYoutubePage(pageKey?: keyof typeof this.pages) {
     if (!pageKey) pageKey = "HomePage";
-    return this.load(this.pages[pageKey]);
+    return this.loadPage(this.pages[pageKey]);
   }
 }
