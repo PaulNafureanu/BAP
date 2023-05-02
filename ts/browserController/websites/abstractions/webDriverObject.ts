@@ -1,5 +1,5 @@
 import path = require("node:path");
-import { Builder, ThenableWebDriver } from "selenium-webdriver";
+import { Builder, Locator, ThenableWebDriver } from "selenium-webdriver";
 import { Options as ChromeOptions } from "selenium-webdriver/chrome";
 
 /**
@@ -80,6 +80,25 @@ export class WebDriverObject {
    */
   public getCurrentUrl() {
     return this.chromeWebDriver.getCurrentUrl();
+  }
+
+  /**
+   * Schedule a command to find an element on the page.
+   * If the element cannot be found, a bot.ErrorCode.NO_SUCH_ELEMENT result will be returned by the driver.
+   * @param locator a locator object that identifies the web element.
+   * @returns A promise that will resolve to an web element if found on the webpage.
+   */
+  public findElement(locator: Locator) {
+    return this.chromeWebDriver.findElement(locator);
+  }
+
+  /**
+   * Schedule a command to search for multiple web elements on the webpage.
+   * @param locator a locator object that identifies the web elements.
+   * @returns A promise that will resolve to an array of WebElements.
+   */
+  public findElements(locator: Locator) {
+    return this.chromeWebDriver.findElements(locator);
   }
 
   /**

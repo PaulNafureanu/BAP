@@ -16,7 +16,7 @@ class YoutubeWebSite extends webSiteObject_1.WebSiteObject {
     };
     pages = {
         HomePage: new youtubeHomePage_1.YoutubeHomePage(this.webSiteURL, this.webDriverState.webDriver),
-        ChannelDashboard: new channelDashboardPage_1.ChannelDashboardPage(this.URLs.ChannelDashboard, this.webDriverState.webDriver),
+        ChannelDashboard: new channelDashboardPage_1.YoutubeChannelDashboardPage(this.URLs.ChannelDashboard, this.webDriverState.webDriver),
     };
     /**
      * Construct and return a Youtube WebSite object to navigate within.
@@ -25,11 +25,21 @@ class YoutubeWebSite extends webSiteObject_1.WebSiteObject {
     constructor(options) {
         super(options);
     }
+    /**
+     * Schedules a command to load the youtube home page object.
+     * @return A promise that will be resolved when the page object has finished loading.
+     * It throws an error and quits the session if the page object is not loaded correctly.
+     */
     async loadHomePage() {
         const page = this.pages["HomePage"];
         await this.loadPage(page);
         return page;
     }
+    /**
+     * Schedules a command to load the channel dashboard page object.
+     * @return A promise that will be resolved when the page object has finished loading.
+     * It throws an error and quits the session if the page object is not loaded correctly.
+     */
     async loadChannelDashboard() {
         const page = this.pages["ChannelDashboard"];
         await this.loadPage(page);

@@ -1,13 +1,13 @@
 import { HomePageObject } from "../../abstractions/pages/homePageObject";
-import { AccountMenuComponent } from "../components/accountMenuComponent";
-import { MastheadMenuComponent } from "../components/mastheadMenuComponent";
+import { YoutubeAccountMenuComponent } from "../components/accountMenuComponent";
+import { YoutubeMastheadMenuComponent } from "../components/mastheadMenuComponent";
 
 export class YoutubeHomePage extends HomePageObject {
-  public accountMenu() {
-    return new AccountMenuComponent(this.webDriver);
+  public getAccountMenu() {
+    return new YoutubeAccountMenuComponent(this.webDriver);
   }
-  public mastheadMenu() {
-    return new MastheadMenuComponent(this.webDriver);
+  public getMastheadMenu() {
+    return new YoutubeMastheadMenuComponent(this.webDriver);
   }
 }
 

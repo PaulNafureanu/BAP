@@ -1,3 +1,3 @@
 import { PageObject } from "../../abstractions/pageObject";
 
-export class ChannelDashboardPage extends PageObject {}
+export class YoutubeChannelDashboardPage extends PageObject {}

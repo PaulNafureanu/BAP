@@ -82,6 +82,11 @@ export class WebSiteObject {
     }
   }
 
+  /**
+   * Schedules a command to load a page object.
+   * @return A promise that will be resolved when the page object has finished loading.
+   * It throws an error and quits the session if the page object is not loaded correctly.
+   */
   protected async loadPage(page: PageObject) {
     const { webDriver } = this.webDriverState;
     await webDriver.windowMinMax("maximize");

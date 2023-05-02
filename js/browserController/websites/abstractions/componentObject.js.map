@@ -1,1 +1,1 @@
-{"version":3,"file":"componentObject.js","sourceRoot":"","sources":["../../../../ts/browserController/websites/abstractions/componentObject.ts"],"names":[],"mappings":""}
+{"version":3,"file":"componentObject.js","sourceRoot":"","sources":["../../../../ts/browserController/websites/abstractions/componentObject.ts"],"names":[],"mappings":";;;AAEA;;GAEG;AACH,MAAa,eAAe;IAChB,SAAS,CAAkB;IAErC;;OAEG;IACH,YAAY,SAA0B;QACpC,IAAI,CAAC,SAAS,GAAG,SAAS,CAAC;IAC7B,CAAC;CACF;AATD,0CASC"}

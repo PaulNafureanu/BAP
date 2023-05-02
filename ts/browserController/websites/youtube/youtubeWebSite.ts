@@ -1,6 +1,6 @@
 import { WebSiteObject, WebSiteOptions } from "../abstractions/webSiteObject";
 import { YoutubeHomePage } from "./pages/youtubeHomePage";
-import { ChannelDashboardPage } from "./pages/channelDashboardPage";
+import { YoutubeChannelDashboardPage } from "./pages/channelDashboardPage";
 
 /**
  * It creates Youtube WebSite Objects that will contain the general representation of the youtube websites,
@@ -20,7 +20,7 @@ export class YoutubeWebSite extends WebSiteObject {
       this.webSiteURL,
       this.webDriverState.webDriver
     ),
-    ChannelDashboard: new ChannelDashboardPage(
+    ChannelDashboard: new YoutubeChannelDashboardPage(
       this.URLs.ChannelDashboard,
       this.webDriverState.webDriver
     ),
@@ -34,12 +34,22 @@ export class YoutubeWebSite extends WebSiteObject {
     super(options);
   }
 
+  /**
+   * Schedules a command to load the youtube home page object.
+   * @return A promise that will be resolved when the page object has finished loading.
+   * It throws an error and quits the session if the page object is not loaded correctly.
+   */
   public async loadHomePage() {
     const page = this.pages["HomePage"];
     await this.loadPage(page);
     return page;
   }
 
+  /**
+   * Schedules a command to load the channel dashboard page object.
+   * @return A promise that will be resolved when the page object has finished loading.
+   * It throws an error and quits the session if the page object is not loaded correctly.
+   */
   public async loadChannelDashboard() {
     const page = this.pages["ChannelDashboard"];
     await this.loadPage(page);

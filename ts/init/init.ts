@@ -4,7 +4,7 @@ async function init() {
   // General demonstration of the websiteobject class:
   const ytWebSite = new YoutubeWebSite();
   const ytHomepage = await ytWebSite.loadHomePage();
-  const ytAccountMenu = ytHomepage.accountMenu();
+  const ytAccountMenu = ytHomepage.getAccountMenu();
   ytWebSite.quitAfter(3000);
 }
 

@@ -4,7 +4,8 @@ const youtubeWebSite_1 = require("../browserController/websites/youtube/youtubeW
 async function init() {
     // General demonstration of the websiteobject class:
     const ytWebSite = new youtubeWebSite_1.YoutubeWebSite();
-    await ytWebSite.load();
+    const ytHomepage = await ytWebSite.loadHomePage();
+    const ytAccountMenu = ytHomepage.getAccountMenu();
     ytWebSite.quitAfter(3000);
 }
 init();

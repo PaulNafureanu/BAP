@@ -70,6 +70,23 @@ class WebDriverObject {
         return this.chromeWebDriver.getCurrentUrl();
     }
     /**
+     * Schedule a command to find an element on the page.
+     * If the element cannot be found, a bot.ErrorCode.NO_SUCH_ELEMENT result will be returned by the driver.
+     * @param locator a locator object that identifies the web element.
+     * @returns A promise that will resolve to an web element if found on the webpage.
+     */
+    findElement(locator) {
+        return this.chromeWebDriver.findElement(locator);
+    }
+    /**
+     * Schedule a command to search for multiple web elements on the webpage.
+     * @param locator a locator object that identifies the web elements.
+     * @returns A promise that will resolve to an array of WebElements.
+     */
+    findElements(locator) {
+        return this.chromeWebDriver.findElements(locator);
+    }
+    /**
      * Set an implicit wait for the session of this web driver.
      * Warning: Do not mix implicit and explicit waits.
      * @param     {number}     ms    the timeout in ms.
