@@ -1,6 +1,7 @@
 import { WebSiteObject, WebSiteOptions } from "../abstractions/webSiteObject";
 import { YoutubeHomePage } from "./pages/youtubeHomePage";
 import { YoutubeChannelDashboardPage } from "./pages/channelDashboardPage";
+import { YoutubeStudio } from "./pages/youtubeStudio";
 
 /**
  * It creates Youtube WebSite Objects that will contain the general representation of the youtube websites,
@@ -13,6 +14,8 @@ export class YoutubeWebSite extends WebSiteObject {
     HomePage: this.webSiteURL,
     ChannelDashboard:
       "https://studio.youtube.com/channel/UCopd8ft4OZRkVa2nG7ZA4HQ",
+    YoutubeStudio:
+      "https://studio.youtube.com/channel/UCopd8ft4OZRkVa2nG7ZA4HQ",
   };
 
   protected pages = {
@@ -22,6 +25,10 @@ export class YoutubeWebSite extends WebSiteObject {
     ),
     ChannelDashboard: new YoutubeChannelDashboardPage(
       this.URLs.ChannelDashboard,
+      this.webDriverState.webDriver
+    ),
+    YoutubeStudio: new YoutubeStudio(
+      this.URLs.YoutubeStudio,
       this.webDriverState.webDriver
     ),
   };
@@ -52,6 +59,17 @@ export class YoutubeWebSite extends WebSiteObject {
    */
   public async loadChannelDashboard() {
     const page = this.pages["ChannelDashboard"];
+    await this.loadPage(page);
+    return page;
+  }
+
+  /**
+   * Schedules a command to load the channel's youtube studio page object.
+   * @return A promise that will be resolved when the page object has finished loading.
+   * It throws an error and quits the session if the page object is not loaded correctly.
+   */
+  public async loadYoutubeStudio() {
+    const page = this.pages["YoutubeStudio"];
     await this.loadPage(page);
     return page;
   }

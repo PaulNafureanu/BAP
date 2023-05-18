@@ -1,3 +1,5 @@
 node_modules/
 ts/browserController/userdata/
 js/browserController/userdata/
+ts/windowsController/resources/
+js/windowsController/resources/
