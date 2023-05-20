@@ -11,7 +11,7 @@ async function init() {
     "../../ts/windowsController/resources/upload/sample.mp4"
   );
   await ytStudio.uploadVideo(new Video(videoFilePath));
-  ytWebSite.quitAfter(3000);
+  ytWebSite.quitAfter(10000);
 }
 
 init();

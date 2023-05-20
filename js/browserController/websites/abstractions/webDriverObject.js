@@ -117,6 +117,26 @@ class WebDriverObject {
         return this.chromeWebDriver.navigate().refresh();
     }
     /**
+     * Schedules a command to wait for a condition to hold for a single web element.
+     * @param condition A condition that will repeatedly be evaluated until it returns a truthy value.
+     * It is defined as a promise, condition object, or a function to evaluate as a condition.
+     * @param timeout How long to wait for the condition to be true
+     * @returns A promise that will be fulfilled with the first truthy value returned by the condition function, or rejected if the condition times out.
+     */
+    waitForElement(condition, timeout) {
+        return this.chromeWebDriver.wait(condition, timeout);
+    }
+    /**
+     * Schedules a command to wait for a condition to hold for a multiple web elements.
+     * @param condition A condition that will repeatedly be evaluated until it returns a truthy value.
+     * It is defined as a promise, condition object, or a function to evaluate as a condition.
+     * @param timeout How long to wait for the condition to be true
+     * @returns A promise that will be fulfilled with the first truthy value returned by the condition function, or rejected if the condition times out.
+     */
+    waitForElements(condition, timeout) {
+        return this.chromeWebDriver.wait(condition, timeout);
+    }
+    /**
      * Schedules a command to quit the current session. After calling quit,
      * this instance will be invalidated and may no longer be used to issue commands against the browser.
      * @return A promise that will be resolved when the command has completed.

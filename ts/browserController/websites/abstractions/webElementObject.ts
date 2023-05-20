@@ -1,4 +1,4 @@
-import { By, WebElement } from "selenium-webdriver";
+import { By, WebElement, until } from "selenium-webdriver";
 import { WebDriverObject } from "./webDriverObject";
 
 export interface WebLocator {
@@ -13,6 +13,9 @@ export interface WebLocator {
  * It creates WebElement objects to control specific web elements - the most basic subdivision of a website.
  */
 export class WebElementObject {
+  // Static fields for the class
+  private static defaultWaitTime: number = 200;
+
   // Main states of the web element object
   private webLocator: WebLocator;
   private webDriver: WebDriverObject;
@@ -31,110 +34,138 @@ export class WebElementObject {
 
   /**
    * Schedule a command to search for the web element defined by its web locator on the current webpage.
+   * @param timeout How long to wait to find the element for each locator in ms.
+   * The total wait time is the number of locators checked multiplied by the timeout number in ms.
    * @returns  A promise that will resolve to an WebElement if found or
    * throws error if such element does not exist.
    */
-  private async findWebElement() {
-    let webElements: WebElement[];
+  private async findWebElement(timeout: number) {
+    let webElements: WebElement[] = [];
 
     if (this.webLocator.IDLocator) {
-      webElements = await this.webDriver.findElements(
-        By.id(this.webLocator.IDLocator)
+      try {
+        webElements = await this.webDriver.waitForElements(
+          until.elementsLocated(By.id(this.webLocator.IDLocator)),
+          timeout
+        );
+
+        if (webElements.length > 0) {
+          this.webElement = webElements[0];
+          return webElements[0];
+        }
+      } catch (error) {}
+    }
+
+    try {
+      webElements = await this.webDriver.waitForElements(
+        until.elementsLocated(By.css(this.webLocator.CSSLocator)),
+        timeout
       );
       if (webElements.length > 0) {
         this.webElement = webElements[0];
         return webElements[0];
       }
-    }
+    } catch (error) {}
 
-    webElements = await this.webDriver.findElements(
-      By.css(this.webLocator.CSSLocator)
-    );
-    if (webElements.length > 0) {
-      this.webElement = webElements[0];
-      return webElements[0];
-    }
-
-    webElements = await this.webDriver.findElements(
-      By.css(this.webLocator.CSSLocator2)
-    );
-    if (webElements.length > 0) {
-      this.webElement = webElements[0];
-      return webElements[0];
-    }
+    try {
+      webElements = await this.webDriver.waitForElements(
+        until.elementsLocated(By.css(this.webLocator.CSSLocator2)),
+        timeout
+      );
+      if (webElements.length > 0) {
+        this.webElement = webElements[0];
+        return webElements[0];
+      }
+    } catch (error) {}
 
     if (this.webLocator.CSSLocator3) {
-      webElements = await this.webDriver.findElements(
-        By.css(this.webLocator.CSSLocator3)
+      try {
+        webElements = await this.webDriver.waitForElements(
+          until.elementsLocated(By.css(this.webLocator.CSSLocator3)),
+          timeout
+        );
+        if (webElements.length > 0) {
+          this.webElement = webElements[0];
+          return webElements[0];
+        }
+      } catch (error) {}
+    }
+
+    try {
+      webElements = await this.webDriver.waitForElements(
+        until.elementsLocated(By.xpath(this.webLocator.XPath)),
+        timeout
       );
       if (webElements.length > 0) {
         this.webElement = webElements[0];
         return webElements[0];
       }
+    } catch (error) {
+      throw new Error(
+        "There is no such web element with this web locator on the current webpage."
+      );
     }
-
-    webElements = await this.webDriver.findElements(
-      By.xpath(this.webLocator.XPath)
-    );
-    if (webElements.length > 0) {
-      this.webElement = webElements[0];
-      return webElements[0];
-    }
-
-    throw new Error(
-      "There is no such web element with this web locator on the current webpage."
-    );
   }
 
-  public async click() {
+  //TODO: To put an explicit wait condition using until for elementEnable, elementVisible, so on, for each of the below methods:
+
+  public async click(timeout: number = WebElementObject.defaultWaitTime) {
     let webElement = this.webElement;
-    if (!webElement) webElement = await this.findWebElement();
-    await webElement.click();
+    if (!webElement) webElement = await this.findWebElement(timeout);
+    await webElement?.click();
   }
-  public async getText() {
+  public async getText(timeout: number = WebElementObject.defaultWaitTime) {
     let webElement = this.webElement;
-    if (!webElement) webElement = await this.findWebElement();
-    await webElement.getText();
+    if (!webElement) webElement = await this.findWebElement(timeout);
+    await webElement?.getText();
   }
-  public async clear() {
+  public async clear(timeout: number = WebElementObject.defaultWaitTime) {
     let webElement = this.webElement;
-    if (!webElement) webElement = await this.findWebElement();
-    await webElement.clear();
+    if (!webElement) webElement = await this.findWebElement(timeout);
+    await webElement?.clear();
   }
-  public async clearAndSendKeys(str: string) {
+  public async clearAndSendKeys(
+    str: string,
+    timeout: number = WebElementObject.defaultWaitTime
+  ) {
     let webElement = this.webElement;
-    if (!webElement) webElement = await this.findWebElement();
-    await webElement.clear();
-    await webElement.sendKeys(str);
+    if (!webElement) webElement = await this.findWebElement(timeout);
+    await webElement?.clear();
+    await webElement?.sendKeys(str);
   }
-  public async sendKeys(str: string) {
+  public async sendKeys(
+    str: string,
+    timeout: number = WebElementObject.defaultWaitTime
+  ) {
     let webElement = this.webElement;
-    if (!webElement) webElement = await this.findWebElement();
-    await webElement.sendKeys(str);
+    if (!webElement) webElement = await this.findWebElement(timeout);
+    await webElement?.sendKeys(str);
   }
-  public async submit() {
+  public async submit(timeout: number = WebElementObject.defaultWaitTime) {
     let webElement = this.webElement;
-    if (!webElement) webElement = await this.findWebElement();
-    await webElement.submit();
+    if (!webElement) webElement = await this.findWebElement(timeout);
+    await webElement?.submit();
   }
-  public async isDisplayed() {
+  public async isDisplayed(timeout: number = WebElementObject.defaultWaitTime) {
     let webElement = this.webElement;
-    if (!webElement) webElement = await this.findWebElement();
-    return await webElement.isDisplayed();
+    if (!webElement) webElement = await this.findWebElement(timeout);
+    return await webElement?.isDisplayed();
   }
-  public async isEnabled() {
+  public async isEnabled(timeout: number = WebElementObject.defaultWaitTime) {
     let webElement = this.webElement;
-    if (!webElement) webElement = await this.findWebElement();
-    return await webElement.isEnabled();
+    if (!webElement) webElement = await this.findWebElement(timeout);
+    return await webElement?.isEnabled();
   }
-  public async isSelected() {
+  public async isSelected(timeout: number = WebElementObject.defaultWaitTime) {
     let webElement = this.webElement;
-    if (!webElement) webElement = await this.findWebElement();
-    return await webElement.isSelected();
+    if (!webElement) webElement = await this.findWebElement(timeout);
+    return await webElement?.isSelected();
   }
-  public async takeScreenshot() {
+  public async takeScreenshot(
+    timeout: number = WebElementObject.defaultWaitTime
+  ) {
     let webElement = this.webElement;
-    if (!webElement) webElement = await this.findWebElement();
-    return await webElement.takeScreenshot();
+    if (!webElement) webElement = await this.findWebElement(timeout);
+    return await webElement?.takeScreenshot();
   }
 }

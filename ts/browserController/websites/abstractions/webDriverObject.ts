@@ -1,5 +1,13 @@
 import path = require("node:path");
-import { Builder, Locator, ThenableWebDriver } from "selenium-webdriver";
+import {
+  Builder,
+  Condition,
+  Locator,
+  ThenableWebDriver,
+  WebDriver,
+  WebElement,
+  WebElementCondition,
+} from "selenium-webdriver";
 import { Options as ChromeOptions } from "selenium-webdriver/chrome";
 
 /**
@@ -133,6 +141,35 @@ export class WebDriverObject {
    */
   public refresh() {
     return this.chromeWebDriver.navigate().refresh();
+  }
+
+  /**
+   * Schedules a command to wait for a condition to hold for a single web element.
+   * @param condition A condition that will repeatedly be evaluated until it returns a truthy value.
+   * It is defined as a promise, condition object, or a function to evaluate as a condition.
+   * @param timeout How long to wait for the condition to be true
+   * @returns A promise that will be fulfilled with the first truthy value returned by the condition function, or rejected if the condition times out.
+   */
+  public waitForElement(condition: WebElementCondition, timeout: number) {
+    return this.chromeWebDriver.wait(condition, timeout);
+  }
+
+  /**
+   * Schedules a command to wait for a condition to hold for a multiple web elements.
+   * @param condition A condition that will repeatedly be evaluated until it returns a truthy value.
+   * It is defined as a promise, condition object, or a function to evaluate as a condition.
+   * @param timeout How long to wait for the condition to be true
+   * @returns A promise that will be fulfilled with the first truthy value returned by the condition function, or rejected if the condition times out.
+   */
+  public waitForElements(
+    condition:
+      | Function
+      | Condition<WebElement[]>
+      | PromiseLike<WebElement[]>
+      | ((driver: WebDriver) => WebElement[]),
+    timeout: number
+  ) {
+    return this.chromeWebDriver.wait(condition, timeout);
   }
 
   /**

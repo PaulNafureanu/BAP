@@ -9,7 +9,7 @@ async function init() {
     const ytStudio = await ytWebSite.loadYoutubeStudio();
     const videoFilePath = path.join(__dirname, "../../ts/windowsController/resources/upload/sample.mp4");
     await ytStudio.uploadVideo(new video_1.Video(videoFilePath));
-    ytWebSite.quitAfter(3000);
+    ytWebSite.quitAfter(10000);
 }
 init();
 //# sourceMappingURL=init.js.map
